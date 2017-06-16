@@ -62,7 +62,8 @@ type DefaultProps = {
   +maxPeriod: number,
   +component: string | ReactClass<Object> | Function,
   +formatter: Formatter,
-  +now: () => number
+  +now: () => number,
+  +onDate: null | Function
 }
 
 const MINUTE = 60
@@ -80,11 +81,13 @@ export default class TimeAgo extends Component<DefaultProps, Props, void> {
     minPeriod: 0,
     maxPeriod: Infinity,
     formatter: defaultFormatter,
-    now: () => Date.now()
+    now: () => Date.now(),
+    onDate: null
   }
 
   timeoutId: ?number
   isStillMounted: boolean = false
+  lastSuffix: ?string
 
   tick = (refresh: ?boolean): void => {
     if (!this.isStillMounted || !this.props.live) {
@@ -193,7 +196,12 @@ export default class TimeAgo extends Component<DefaultProps, Props, void> {
       delete passDownProps.now
     }
 
+    if (this.props.onDate && this.lastSuffix === 'from now' && suffix === 'ago') {
+      this.props.onDate()
+    }
+
     const nextFormatter = defaultFormatter.bind(null, value, unit, suffix, then)
+    this.lastSuffix = suffix
 
     return (
       <Komponent {...passDownProps} title={passDownTitle}>
