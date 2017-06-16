@@ -198,6 +198,7 @@ export default class TimeAgo extends Component<DefaultProps, Props, void> {
 
     if (this.props.onDate && this.lastSuffix === 'from now' && suffix === 'ago') {
       this.props.onDate()
+      delete passDownProps.onDate
     }
 
     const nextFormatter = defaultFormatter.bind(null, value, unit, suffix, then)
